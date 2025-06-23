@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Plus, Search, Filter, Edit, Eye, Trash2, Users, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
@@ -30,8 +31,8 @@ export default function People() {
   const [search, setSearch] = useState("");
   const [accountFilter, setAccountFilter] = useState<string>("");
   const [page, setPage] = useState(0);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState<PersonWithAccount | null>(null);
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const limit = 20;
@@ -87,7 +88,6 @@ export default function People() {
   };
 
   const handlePersonSaved = () => {
-    setIsAddDialogOpen(false);
     setEditingPerson(null);
     queryClient.invalidateQueries({ queryKey: ["/api/people"] });
   };
@@ -176,20 +176,10 @@ export default function People() {
           <p className="text-gray-600 mt-1 text-sm md:text-base">Manage your contacts and relationships</p>
         </div>
         
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="w-full sm:w-auto">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Person
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl mx-4">
-            <DialogHeader>
-              <DialogTitle>Add New Person</DialogTitle>
-            </DialogHeader>
-            <PersonForm onSaved={handlePersonSaved} />
-          </DialogContent>
-        </Dialog>
+        <Button size="sm" className="w-full sm:w-auto" onClick={() => setLocation("/people/add")}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Person
+        </Button>
       </div>
 
       <Card>
