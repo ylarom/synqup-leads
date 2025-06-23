@@ -29,7 +29,37 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    const [url, ...params] = queryKey;
+    let fullUrl = url as string;
+    
+    // Build query parameters from remaining queryKey elements
+    if (params.length > 0) {
+      const searchParams = new URLSearchParams();
+      
+      // Handle common parameter patterns
+      if (params.length >= 2) {
+        searchParams.append('limit', String(params[0]));
+        searchParams.append('offset', String(params[1]));
+      }
+      if (params.length >= 3 && params[2]) {
+        searchParams.append('search', String(params[2]));
+      }
+      if (params.length >= 4 && params[3]) {
+        searchParams.append('accountId', String(params[3]));
+      }
+      if (params.length >= 4 && params[3] && fullUrl.includes('messages')) {
+        searchParams.append('status', String(params[2]));
+      }
+      if (params.length >= 4 && params[3] && fullUrl.includes('triggers')) {
+        searchParams.append('status', String(params[2]));
+      }
+      
+      if (searchParams.toString()) {
+        fullUrl += '?' + searchParams.toString();
+      }
+    }
+
+    const res = await fetch(fullUrl, {
       credentials: "include",
     });
 

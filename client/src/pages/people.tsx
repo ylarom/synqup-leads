@@ -39,41 +39,13 @@ export default function People() {
 
   const { data, isLoading, error } = useQuery<PeopleData>({
     queryKey: ["/api/people", limit, offset, search, accountFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-        offset: offset.toString(),
-      });
-      
-      if (search) params.append('search', search);
-      if (accountFilter) params.append('accountId', accountFilter);
-      
-      const response = await fetch(`/api/people?${params}`, {
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${await response.text()}`);
-      }
-      
-      return response.json();
-    },
+    enabled: true,
     retry: false,
   });
 
   const { data: accountsData } = useQuery<AccountsData>({
-    queryKey: ["/api/accounts"],
-    queryFn: async () => {
-      const response = await fetch('/api/accounts?limit=100', {
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${await response.text()}`);
-      }
-      
-      return response.json();
-    },
+    queryKey: ["/api/accounts", 100],
+    enabled: true,
     retry: false,
   });
 

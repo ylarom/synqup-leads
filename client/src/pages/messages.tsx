@@ -50,24 +50,6 @@ export default function Messages() {
 
   const { data, isLoading, error } = useQuery<MessagesData>({
     queryKey: ["/api/messages", limit, offset, statusFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-        offset: offset.toString(),
-      });
-      
-      if (statusFilter) params.append('status', statusFilter);
-      
-      const response = await fetch(`/api/messages?${params}`, {
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${await response.text()}`);
-      }
-      
-      return response.json();
-    },
     retry: false,
   });
 

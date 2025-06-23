@@ -107,7 +107,9 @@ This is a full-stack CRM (Customer Relationship Management) system built with Re
 
 ## Changelog
 
-- June 23, 2025. Initial setup
+- June 23, 2025: Initial setup
+- June 23, 2025: Fixed mobile responsiveness with hamburger navigation
+- June 23, 2025: Resolved API routing issues and query parameter handling
 
 ## User Preferences
 

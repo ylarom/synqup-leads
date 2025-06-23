@@ -45,24 +45,6 @@ export default function Triggers() {
 
   const { data, isLoading, error } = useQuery<TriggersData>({
     queryKey: ["/api/triggers", limit, offset, statusFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-        offset: offset.toString(),
-      });
-      
-      if (statusFilter) params.append('status', statusFilter);
-      
-      const response = await fetch(`/api/triggers?${params}`, {
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`${response.status}: ${await response.text()}`);
-      }
-      
-      return response.json();
-    },
     retry: false,
   });
 
