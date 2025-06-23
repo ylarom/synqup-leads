@@ -208,12 +208,12 @@ export default function People() {
             
             <div className="flex gap-2">
               <div className="flex-1">
-                <Select value={accountFilter} onValueChange={setAccountFilter}>
+                <Select value={accountFilter || "all"} onValueChange={(value) => setAccountFilter(value === "all" ? "" : value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Accounts" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Accounts</SelectItem>
+                    <SelectItem value="all">All Accounts</SelectItem>
                     {accountsData?.accounts.map((account) => (
                       <SelectItem key={account.id} value={account.id.toString()}>
                         {account.name}

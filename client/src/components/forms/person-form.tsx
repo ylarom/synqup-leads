@@ -174,8 +174,8 @@ export default function PersonForm({ person, onSaved }: PersonFormProps) {
               <FormItem>
                 <FormLabel>Account</FormLabel>
                 <Select 
-                  value={field.value?.toString() || ""} 
-                  onValueChange={(value) => field.onChange(value ? parseInt(value) : undefined)}
+                  value={field.value?.toString() || "none"} 
+                  onValueChange={(value) => field.onChange(value === "none" ? undefined : parseInt(value))}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -183,7 +183,7 @@ export default function PersonForm({ person, onSaved }: PersonFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="">No account</SelectItem>
+                    <SelectItem value="none">No account</SelectItem>
                     {accountsData?.accounts.map((account) => (
                       <SelectItem key={account.id} value={account.id.toString()}>
                         {account.name}
