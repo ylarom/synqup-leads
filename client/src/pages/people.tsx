@@ -172,21 +172,21 @@ export default function People() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">People</h1>
-          <p className="text-gray-600 mt-1">Manage your contacts and relationships</p>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">People</h1>
+          <p className="text-gray-600 mt-1 text-sm md:text-base">Manage your contacts and relationships</p>
         </div>
         
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button size="sm" className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Add Person
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-3xl mx-4">
             <DialogHeader>
               <DialogTitle>Add New Person</DialogTitle>
             </DialogHeader>
@@ -197,38 +197,38 @@ export default function People() {
 
       <Card>
         {/* Search and Filters */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex flex-wrap gap-4">
-            <Select value={accountFilter} onValueChange={setAccountFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="All Accounts" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Accounts</SelectItem>
-                {accountsData?.accounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id.toString()}>
-                    {account.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <div className="flex-1 min-w-0">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search people..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <div className="flex flex-col gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search people..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
             </div>
             
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <Select value={accountFilter} onValueChange={setAccountFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Accounts" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Accounts</SelectItem>
+                    {accountsData?.accounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id.toString()}>
+                        {account.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="outline" size="icon">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -251,30 +251,32 @@ export default function People() {
               </div>
             </div>
           ) : !data?.people.length ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 px-4">
               <Users className="h-12 w-12 mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No people found</h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-500 mb-4 text-sm md:text-base">
                 {search ? "No people match your search." : "Get started by adding your first contact."}
               </p>
-              <Button onClick={() => setIsAddDialogOpen(true)}>
+              <Button onClick={() => setIsAddDialogOpen(true)} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Person
               </Button>
             </div>
           ) : (
             <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Account</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Social</TableHead>
-                    <TableHead>Added</TableHead>
-                    <TableHead className="w-24">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+              {/* Desktop Table View */}
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Account</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Social</TableHead>
+                      <TableHead>Added</TableHead>
+                      <TableHead className="w-24">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
                 <TableBody>
                   {data.people.map((person) => (
                     <TableRow key={person.id} className="hover:bg-gray-50">
@@ -342,43 +344,124 @@ export default function People() {
                       </TableCell>
                     </TableRow>
                   ))}
-                </TableBody>
-              </Table>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden">
+                <div className="divide-y divide-gray-200">
+                  {data.people.map((person) => (
+                    <div key={person.id} className="p-4 space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <Avatar>
+                            <AvatarFallback className="bg-gray-200 text-gray-700">
+                              {getInitials(person.firstName, person.lastName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-gray-900 truncate">
+                              {person.firstName} {person.lastName}
+                            </div>
+                            {person.title && (
+                              <div className="text-sm text-gray-600 truncate">{person.title}</div>
+                            )}
+                            {person.account && (
+                              <div className="text-sm text-gray-500 truncate">{person.account.name}</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingPerson(person)}
+                            className="h-8 w-8"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(person)}
+                            className="h-8 w-8 text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {(person.email || person.phone) && (
+                        <div className="space-y-1">
+                          {person.email && (
+                            <div className="text-sm text-gray-900">{person.email}</div>
+                          )}
+                          {person.phone && (
+                            <div className="text-sm text-gray-600">{person.phone}</div>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between">
+                        <div>{renderSocialLinks(person)}</div>
+                        <div className="text-xs text-gray-500">
+                          {person.createdAt && formatDistanceToNow(new Date(person.createdAt), { addSuffix: true })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="p-6 border-t border-gray-200 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
-                    Showing {offset + 1} to {Math.min(offset + limit, data.total)} of {data.total} people
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setPage(page - 1)}
-                      disabled={page === 0}
-                    >
-                      Previous
-                    </Button>
-                    {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                      const pageNum = page < 3 ? i : page - 2 + i;
-                      if (pageNum >= totalPages) return null;
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={pageNum === page ? "default" : "outline"}
-                          onClick={() => setPage(pageNum)}
-                        >
-                          {pageNum + 1}
-                        </Button>
-                      );
-                    })}
-                    <Button
-                      variant="outline"
-                      onClick={() => setPage(page + 1)}
-                      disabled={page >= totalPages - 1}
-                    >
-                      Next
-                    </Button>
+                <div className="p-4 md:p-6 border-t border-gray-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="text-sm text-gray-600 text-center sm:text-left">
+                      Showing {offset + 1} to {Math.min(offset + limit, data.total)} of {data.total} people
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(page - 1)}
+                        disabled={page === 0}
+                        className="px-2 md:px-4"
+                      >
+                        Previous
+                      </Button>
+                      <div className="hidden sm:flex gap-2">
+                        {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                          const pageNum = page < 3 ? i : page - 2 + i;
+                          if (pageNum >= totalPages) return null;
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={pageNum === page ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setPage(pageNum)}
+                            >
+                              {pageNum + 1}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      <div className="sm:hidden">
+                        <span className="text-sm text-gray-500 px-2">
+                          {page + 1} of {totalPages}
+                        </span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(page + 1)}
+                        disabled={page >= totalPages - 1}
+                        className="px-2 md:px-4"
+                      >
+                        Next
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}

@@ -28,7 +28,9 @@ function Router() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
       <main className="flex-1 overflow-hidden">
         <Header />
         <div className="h-full overflow-y-auto">
