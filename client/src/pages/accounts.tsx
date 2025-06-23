@@ -30,7 +30,25 @@ export default function Accounts() {
   const offset = page * limit;
 
   const { data, isLoading, error } = useQuery<AccountsData>({
-    queryKey: ["/api/accounts", { limit, offset, search: search || undefined }],
+    queryKey: ["/api/accounts", limit, offset, search],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+      });
+      
+      if (search) params.append('search', search);
+      
+      const response = await fetch(`/api/accounts?${params}`, {
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${await response.text()}`);
+      }
+      
+      return response.json();
+    },
     retry: false,
   });
 
