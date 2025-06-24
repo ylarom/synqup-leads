@@ -380,7 +380,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   };
 
   // News search endpoint - supports both session auth and API key auth
-  app.get('/api/triggers/news/person/:id', (req: any, res: any, next: any) => {
+  app.get('/api/run-trigger/news/person/:id', (req: any, res: any, next: any) => {
     // Check if API key is provided for external access
     const authHeader = req.headers['authorization'];
     const apiKeyHeader = req.headers['x-api-key'];
