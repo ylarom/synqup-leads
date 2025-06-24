@@ -112,7 +112,7 @@ export default function EditPerson() {
           <CardTitle>Person Information</CardTitle>
         </CardHeader>
         <CardContent>
-          <PersonForm person={person} onSaved={handleSaved} />
+          <PersonForm person={person} onSaved={handleSaved} onCancel={handleCancel} />
         </CardContent>
       </Card>
     </div>

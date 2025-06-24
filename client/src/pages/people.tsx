@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Plus, Search, Filter, Edit, Eye, Trash2, Users, Linkedin, Twitter, Instagram, Facebook } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import PersonForm from "@/components/forms/person-form";
+
 import type { PersonWithAccount, Account } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 
@@ -31,7 +31,7 @@ export default function People() {
   const [search, setSearch] = useState("");
   const [accountFilter, setAccountFilter] = useState<string>("");
   const [page, setPage] = useState(0);
-  const [editingPerson, setEditingPerson] = useState<PersonWithAccount | null>(null);
+
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -87,10 +87,7 @@ export default function People() {
     }
   };
 
-  const handlePersonSaved = () => {
-    setEditingPerson(null);
-    queryClient.invalidateQueries({ queryKey: ["/api/people"] });
-  };
+
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -244,7 +241,7 @@ export default function People() {
               <p className="text-gray-500 mb-4 text-sm md:text-base">
                 {search ? "No people match your search." : "Get started by adding your first contact."}
               </p>
-              <Button onClick={() => setIsAddDialogOpen(true)} size="sm">
+              <Button onClick={() => setLocation("/people/add")} size="sm">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Person
               </Button>
@@ -315,7 +312,7 @@ export default function People() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setEditingPerson(person)}
+                            onClick={() => setLocation(`/people/edit/${person.id}`)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -363,7 +360,7 @@ export default function People() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setEditingPerson(person)}
+                            onClick={() => setLocation(`/people/edit/${person.id}`)}
                             className="h-8 w-8"
                           >
                             <Edit className="h-4 w-4" />
@@ -457,20 +454,7 @@ export default function People() {
         </CardContent>
       </Card>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editingPerson} onOpenChange={() => setEditingPerson(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Edit Person</DialogTitle>
-          </DialogHeader>
-          {editingPerson && (
-            <PersonForm
-              person={editingPerson}
-              onSaved={handlePersonSaved}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }

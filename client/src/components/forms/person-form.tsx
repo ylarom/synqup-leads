@@ -17,6 +17,7 @@ import { insertPersonSchema, type PersonWithAccount, type InsertPerson, type Acc
 interface PersonFormProps {
   person?: PersonWithAccount;
   onSaved: () => void;
+  onCancel?: () => void;
 }
 
 interface AccountsData {
@@ -24,7 +25,7 @@ interface AccountsData {
   total: number;
 }
 
-export default function PersonForm({ person, onSaved }: PersonFormProps) {
+export default function PersonForm({ person, onSaved, onCancel }: PersonFormProps) {
   const { toast } = useToast();
   const isEditing = !!person;
   const [newsResults, setNewsResults] = useState<any>(null);
@@ -336,9 +337,11 @@ export default function PersonForm({ person, onSaved }: PersonFormProps) {
         />
 
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onSaved}>
-            Cancel
-          </Button>
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
           <Button type="submit" disabled={savePersonMutation.isPending}>
             {savePersonMutation.isPending ? "Saving..." : isEditing ? "Update Person" : "Create Person"}
           </Button>
