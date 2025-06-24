@@ -357,8 +357,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple auth middleware that accepts API key or session auth
+  const authMiddleware = (req: any, res: any, next: any) => {
+    // Check for API key in header
+    const apiKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
+    if (apiKey === process.env.TEST_API_KEY) {
+      return next();
+    }
+    
+    // Fall back to session authentication
+    return isAuthenticated(req, res, next);
+  };
+
   // News search endpoint
-  app.get('/api/triggers/news/person/:id', isAuthenticated, async (req, res) => {
+  app.get('/api/triggers/news/person/:id', authMiddleware, async (req, res) => {
     try {
       const personId = parseInt(req.params.id);
       if (isNaN(personId)) {
