@@ -28,6 +28,7 @@ export class GoogleNewsService {
       }
 
       const searchQuery = this.buildSearchQuery(query, sources || this.searchSources);
+      console.log(`Making Google Custom Search request with query: ${searchQuery}`);
       
       // Use Google Custom Search API
       const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
@@ -42,11 +43,15 @@ export class GoogleNewsService {
         }
       });
 
+      console.log(`Google API response status: ${response.status}`);
+      console.log(`Response data keys: ${Object.keys(response.data)}`);
+
       if (!response.data.items) {
+        console.log('No items found in response');
         return [];
       }
 
-      return response.data.items.map((item: any) => ({
+      const results = response.data.items.map((item: any) => ({
         title: item.title,
         link: item.link,
         snippet: item.snippet || '',
@@ -55,6 +60,9 @@ export class GoogleNewsService {
               item.pagemap?.metatags?.[0]?.date || 
               new Date().toISOString()
       }));
+
+      console.log(`Processed ${results.length} news results`);
+      return results;
     } catch (error) {
       console.error('Error searching news:', error);
       // Fallback to RSS feeds or other news sources if API fails
@@ -70,6 +78,7 @@ export class GoogleNewsService {
 
   async searchPersonNews(personId: number): Promise<NewsResult[]> {
     try {
+      console.log(`Fetching person with ID: ${personId}`);
       const person = await storage.getPerson(personId);
       if (!person) {
         throw new Error('Person not found');
@@ -87,10 +96,13 @@ export class GoogleNewsService {
         searchTerms += ` "${person.title}"`;
       }
 
-      return await this.searchNews(searchTerms);
+      console.log(`Search terms: ${searchTerms}`);
+      const results = await this.searchNews(searchTerms);
+      console.log(`Google Custom Search returned ${results.length} results`);
+      return results;
     } catch (error) {
       console.error('Error searching person news:', error);
-      return [];
+      throw error; // Re-throw to preserve error details
     }
   }
 

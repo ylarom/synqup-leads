@@ -365,7 +365,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid person ID" });
       }
 
+      console.log(`Searching news for person ID: ${personId}`);
       const newsResults = await googleNewsService.searchPersonNews(personId);
+      console.log(`Found ${newsResults.length} news articles`);
+      
       res.json({ articles: newsResults, total: newsResults.length });
     } catch (error) {
       console.error("Error searching person news:", error);
@@ -375,9 +378,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error.message === 'Google API key not configured') {
         return res.status(500).json({ message: "Google API key not configured" });
       }
-      res.status(500).json({ message: "Failed to search news" });
+      res.status(500).json({ message: "Failed to search news", error: error.message });
     }
   });
+
+
 
   const httpServer = createServer(app);
   return httpServer;
