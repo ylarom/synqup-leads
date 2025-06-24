@@ -76,7 +76,7 @@ export class GoogleNewsService {
     return query;
   }
 
-  async searchPersonNews(personId: number): Promise<NewsResult[]> {
+  async searchPersonNews(personId: number): Promise<{ articles: NewsResult[], searchQuery: string }> {
     try {
       console.log(`Fetching person with ID: ${personId}`);
       const person = await storage.getPerson(personId);
@@ -99,7 +99,7 @@ export class GoogleNewsService {
       console.log(`Search terms: ${searchTerms}`);
       const results = await this.searchNews(searchTerms);
       console.log(`Google Custom Search returned ${results.length} results`);
-      return results;
+      return { articles: results, searchQuery: searchTerms };
     } catch (error) {
       console.error('Error searching person news:', error);
       throw error; // Re-throw to preserve error details

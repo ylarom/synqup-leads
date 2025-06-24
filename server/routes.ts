@@ -400,10 +400,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log(`Searching news for person ID: ${personId}`);
-      const newsResults = await googleNewsService.searchPersonNews(personId);
-      console.log(`Found ${newsResults.length} news articles`);
+      const { articles, searchQuery } = await googleNewsService.searchPersonNews(personId);
+      console.log(`Found ${articles.length} news articles`);
       
-      res.json({ articles: newsResults, total: newsResults.length });
+      res.json({ 
+        searchQuery,
+        articles, 
+        total: articles.length 
+      });
     } catch (error) {
       console.error("Error searching person news:", error);
       if (error.message === 'Person not found') {
