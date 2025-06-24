@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertAccountSchema, insertPersonSchema, insertMessageSchema, insertTriggerSchema } from "@shared/schema";
+import { googleNewsService } from "./services/googleNews";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -353,6 +354,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error sending drafts:", error);
       res.status(500).json({ message: "Failed to send drafts" });
+    }
+  });
+
+  // News search endpoint
+  app.get('/api/triggers/news/person/:id', isAuthenticated, async (req, res) => {
+    try {
+      const personId = parseInt(req.params.id);
+      if (isNaN(personId)) {
+        return res.status(400).json({ message: "Invalid person ID" });
+      }
+
+      const newsResults = await googleNewsService.searchPersonNews(personId);
+      res.json({ articles: newsResults, total: newsResults.length });
+    } catch (error) {
+      console.error("Error searching person news:", error);
+      if (error.message === 'Person not found') {
+        return res.status(404).json({ message: "Person not found" });
+      }
+      if (error.message === 'Google API key not configured') {
+        return res.status(500).json({ message: "Google API key not configured" });
+      }
+      res.status(500).json({ message: "Failed to search news" });
     }
   });
 

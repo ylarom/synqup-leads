@@ -22,28 +22,38 @@ export class GoogleNewsService {
 
   async searchNews(query: string, sources?: string[]): Promise<NewsResult[]> {
     try {
-      // Use Google Custom Search API or News API
-      const apiKey = process.env.GOOGLE_NEWS_API_KEY || process.env.NEWS_API_KEY || "default_key";
+      const apiKey = process.env.GOOGLE_API_KEY;
+      if (!apiKey) {
+        throw new Error('Google API key not configured');
+      }
+
       const searchQuery = this.buildSearchQuery(query, sources || this.searchSources);
       
-      // Using News API as fallback since it's more commonly available
-      const response = await axios.get('https://newsapi.org/v2/everything', {
+      // Use Google Custom Search API
+      const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
         params: {
+          key: apiKey,
+          cx: 'c6a59edd379c64323', // Google CSE ID provided
           q: searchQuery,
-          domains: 'forbes.com,bloomberg.com,techcrunch.com,reuters.com,wsj.com,cnbc.com',
-          language: 'en',
-          sortBy: 'publishedAt',
-          pageSize: 20,
-          apiKey: apiKey
+          dateRestrict: 'd7', // Last 7 days
+          num: 10,
+          sort: 'date',
+          lr: 'lang_en'
         }
       });
 
-      return response.data.articles.map((article: any) => ({
-        title: article.title,
-        link: article.url,
-        snippet: article.description || '',
-        source: article.source.name,
-        date: article.publishedAt
+      if (!response.data.items) {
+        return [];
+      }
+
+      return response.data.items.map((item: any) => ({
+        title: item.title,
+        link: item.link,
+        snippet: item.snippet || '',
+        source: new URL(item.link).hostname.replace('www.', ''),
+        date: item.pagemap?.metatags?.[0]?.['article:published_time'] || 
+              item.pagemap?.metatags?.[0]?.date || 
+              new Date().toISOString()
       }));
     } catch (error) {
       console.error('Error searching news:', error);
@@ -53,12 +63,35 @@ export class GoogleNewsService {
   }
 
   private buildSearchQuery(query: string, sources: string[]): string {
-    // Remove common corporate suffixes for better search results
-    const cleanQuery = query
-      .replace(/\b(Inc|LLC|Corp|Corporation|Ltd|Limited)\b\.?/gi, '')
-      .trim();
-    
-    return `"${cleanQuery}"`;
+    // For Google Custom Search, we don't need site: prefixes in the query
+    // The CSE is already configured with specific sources
+    return query;
+  }
+
+  async searchPersonNews(personId: number): Promise<NewsResult[]> {
+    try {
+      const person = await storage.getPerson(personId);
+      if (!person) {
+        throw new Error('Person not found');
+      }
+
+      // Build search query with person name and company
+      let searchTerms = `"${person.firstName} ${person.lastName}"`;
+      
+      if (person.account?.name) {
+        searchTerms += ` "${person.account.name}"`;
+      }
+      
+      // Add professional context keywords
+      if (person.title) {
+        searchTerms += ` "${person.title}"`;
+      }
+
+      return await this.searchNews(searchTerms);
+    } catch (error) {
+      console.error('Error searching person news:', error);
+      return [];
+    }
   }
 
   async scanAccountNews(): Promise<void> {

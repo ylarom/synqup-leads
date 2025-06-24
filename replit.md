@@ -112,6 +112,7 @@ This is a full-stack CRM (Customer Relationship Management) system built with Re
 - June 23, 2025: Resolved API routing issues and query parameter handling
 - June 23, 2025: Fixed Select component validation errors with non-empty values
 - June 23, 2025: Converted "Add Person" from popup to dedicated page for better UX
+- June 24, 2025: Added Google Custom Search API integration for person news search
 
 ## User Preferences
 
