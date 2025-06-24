@@ -10,6 +10,7 @@ import Dashboard from "@/pages/dashboard";
 import Accounts from "@/pages/accounts";
 import People from "@/pages/people";
 import AddPerson from "@/pages/add-person";
+import EditPerson from "@/pages/edit-person";
 import Messages from "@/pages/messages";
 import Triggers from "@/pages/triggers";
 import Sidebar from "@/components/layout/sidebar";
@@ -40,6 +41,7 @@ function Router() {
             <Route path="/accounts" component={Accounts} />
             <Route path="/people" component={People} />
             <Route path="/people/add" component={AddPerson} />
+            <Route path="/people/edit/:id" component={EditPerson} />
             <Route path="/messages" component={Messages} />
             <Route path="/triggers" component={Triggers} />
             <Route component={NotFound} />
