@@ -357,20 +357,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Simple auth middleware that accepts API key or session auth
-  const authMiddleware = (req: any, res: any, next: any) => {
-    // Check for API key in header
-    const apiKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
-    if (apiKey === process.env.TEST_API_KEY) {
-      return next();
+  // API key authentication middleware for external integrations
+  const apiKeyAuth = (req: any, res: any, next: any) => {
+    const authHeader = req.headers['authorization'];
+    const apiKey = req.headers['x-api-key'];
+    
+    // Extract Bearer token or use x-api-key header
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : apiKey;
+    
+    if (!token) {
+      return res.status(401).json({ message: "API key required. Use 'Authorization: Bearer <key>' or 'X-API-Key: <key>' header" });
     }
     
-    // Fall back to session authentication
-    return isAuthenticated(req, res, next);
+    // In production, this would validate against a database of API keys
+    // For now, we'll use the environment variable
+    if (token !== process.env.GOOGLE_API_KEY) {
+      return res.status(401).json({ message: "Invalid API key" });
+    }
+    next();
   };
 
-  // News search endpoint
-  app.get('/api/triggers/news/person/:id', authMiddleware, async (req, res) => {
+  // News search endpoint - supports both session auth and API key auth
+  app.get('/api/triggers/news/person/:id', (req: any, res: any, next: any) => {
+    // Check if API key is provided for external access
+    const authHeader = req.headers['authorization'];
+    const apiKeyHeader = req.headers['x-api-key'];
+    
+    const hasApiKey = (authHeader && authHeader.startsWith('Bearer ')) || apiKeyHeader;
+    
+    if (hasApiKey) {
+      return apiKeyAuth(req, res, next);
+    } else {
+      return isAuthenticated(req, res, next);
+    }
+  }, async (req, res) => {
     try {
       const personId = parseInt(req.params.id);
       if (isNaN(personId)) {
