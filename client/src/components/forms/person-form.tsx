@@ -368,17 +368,52 @@ export default function PersonForm({ person, onSaved, onCancel }: PersonFormProp
           <DialogTitle>News Search Results</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          {newsResults && (
+          {newsResults && newsResults.searchQuery && (
             <div className="bg-gray-50 p-4 rounded-lg">
               <h3 className="font-medium mb-2">Search Query:</h3>
-              <code className="text-sm bg-white p-2 rounded border block">
+              <code className="text-sm bg-white p-2 rounded border block break-all">
                 {newsResults.searchQuery}
               </code>
             </div>
           )}
           
+          {newsResults && newsResults.articles && newsResults.articles.length > 0 && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-medium mb-2">Found Articles ({newsResults.total}):</h3>
+              <div className="space-y-2">
+                {newsResults.articles.map((article, index) => (
+                  <div key={index} className="bg-white p-3 rounded border">
+                    <h4 className="font-medium text-sm mb-1">{article.title}</h4>
+                    <p className="text-xs text-gray-600 mb-1">{article.snippet}</p>
+                    <div className="flex justify-between items-center text-xs text-gray-500">
+                      <span>{article.source}</span>
+                      <span>{article.date}</span>
+                    </div>
+                    <a 
+                      href={article.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-xs"
+                    >
+                      Read more →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {newsResults && (!newsResults.articles || newsResults.articles.length === 0) && (
+            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+              <h3 className="font-medium mb-2 text-yellow-800">No Articles Found</h3>
+              <p className="text-sm text-yellow-700">
+                No recent news articles were found for the search query: <code className="bg-yellow-100 px-1 rounded">{newsResults.searchQuery}</code>
+              </p>
+            </div>
+          )}
+          
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-medium mb-2">JSON Response:</h3>
+            <h3 className="font-medium mb-2">Raw JSON Response:</h3>
             <pre className="text-xs bg-white p-4 rounded border overflow-x-auto">
               {JSON.stringify(newsResults, null, 2)}
             </pre>
