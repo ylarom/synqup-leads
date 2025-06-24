@@ -91,7 +91,7 @@ export default function EditPerson() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl min-h-full pb-20">
       <div className="mb-6">
         <Button
           variant="ghost"

@@ -114,6 +114,9 @@ This is a full-stack CRM (Customer Relationship Management) system built with Re
 - June 23, 2025: Converted "Add Person" from popup to dedicated page for better UX
 - June 24, 2025: Added Google Custom Search API integration for person news search
 - June 24, 2025: Implemented production-ready API key authentication for external integrations
+- June 24, 2025: Fixed Edit Person to use dedicated page instead of popup dialog
+- June 24, 2025: Added "Run Search News Trigger" button with JSON results popup in Edit Person page
+- June 24, 2025: Fixed page scrolling issues on add/edit person pages
 
 ## User Preferences
 

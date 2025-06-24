@@ -35,7 +35,7 @@ function Router() {
       </div>
       <main className="flex-1 overflow-hidden">
         <Header />
-        <div className="h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto overflow-x-hidden">
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/accounts" component={Accounts} />
