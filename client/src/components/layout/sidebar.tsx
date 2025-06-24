@@ -69,7 +69,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white shadow-lg border-r border-gray-200">
+    <aside className="w-64 bg-white shadow-lg border-r border-gray-200 relative">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ export default function Sidebar() {
       </nav>
 
       {/* User Profile */}
-      <div className="absolute bottom-4 left-4 right-4">
+      <div className="absolute bottom-4 left-4 right-4 max-w-[calc(100%-2rem)]">
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="flex items-center gap-3 mb-2">
             <Avatar className="h-8 w-8">
